@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Main-Class: reliablecollections.sample.service.ReliableCollectionsSamp
+ leServiceHost
+Class-Path: lib/asm-commons-5.0.4.jar lib/asm-analysis-5.0.4.jar lib/a
+ sm-xml-5.0.4.jar lib/microsoft.servicefabric.fabrictransport-preview.
+ jar lib/gson-2.7.jar lib/asm-tree-5.0.4.jar lib/system.fabric-preview
+ .jar lib/microsoft.servicefabric.actors-preview.jar lib/asm-5.0.4.jar
+  lib/asm-util-5.0.4.jar lib/microsoft.servicefabric.services-preview.
+ jar
+
