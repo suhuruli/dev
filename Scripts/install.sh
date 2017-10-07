@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-appPkgPath="$DIR/../VotingJavaApplication"
+appPkgPath="$DIR/../JavaApplication"
 
 if [[ "$#" != "0" ]];then 
 	version="$1"
@@ -15,13 +15,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-sfctl application provision --application-type-build-path VotingJavaApplication 
+sfctl application provision --application-type-build-path JavaApplication 
 if [ $? -ne 0 ]; then
     echo "Application type registration failed."
     exit 1
 fi
 
-sfctl application create --app-name fabric:/VotingJavaApplication --app-type VotingJavaApplicationType  --app-version $version
+sfctl application create --app-name fabric:/JavaApplication --app-type JavaApplicationType  --app-version $version
 if [ $? -ne 0 ]; then
     echo "Application creation failed."
     exit 1
