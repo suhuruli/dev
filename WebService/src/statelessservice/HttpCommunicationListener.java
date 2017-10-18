@@ -135,11 +135,13 @@ public class HttpCommunicationListener implements CommunicationListener {
                             conn.setRequestMethod(method);
                             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                             String line;
-                            ArrayList<String> list = new ArrayList<String>();
+                            HashMap<String,String> list = new HashMap<String,String>();
                             
                             while ((line = rd.readLine()) != null) {
-                                list.add(line);
+                            	String[] keyValueArray = line.split(",");
+                            	list.put(keyValueArray[0], keyValueArray[1]);
                             }
+                            
                             String json = new Gson().toJson(list);
                             os.write(json.getBytes("UTF-8"));
                             rd.close();

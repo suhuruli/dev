@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ServiceManifest Name="WebServicePkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Description>Service that implements a VotingWeb service</Description>
+  <Description>Service that implements a WebService service</Description>
   <ServiceTypes>
     <StatelessServiceType ServiceTypeName="WebServiceType" />
   </ServiceTypes>

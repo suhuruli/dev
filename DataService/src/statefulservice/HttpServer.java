@@ -59,11 +59,17 @@ public class HttpServer {
                     tx = stateManager.createTransaction();
                     AsyncEnumeration<String> keys = map1.<String> keysAsync(tx).get();
                     tx.commitAsync().get();
-                    tx.close();
+                    tx.close();                                   
                     
                     String itemAsKey = "";
+                    String keyString; 
                     while (keys.<Boolean>hasMoreElementsAsync().get().booleanValue()) {
-                    	itemAsKey += keys.nextElementAsync().get();
+                    	keyString = keys.nextElementAsync().get();
+                    	itemAsKey += keyString;
+                    	itemAsKey += ","; 
+                        tx = stateManager.createTransaction();
+                    	itemAsKey += map1.getAsync(tx, keyString).get().getValue();
+                        tx.close();                                   
                     	itemAsKey += "\n";
                     }
                     
@@ -86,7 +92,7 @@ public class HttpServer {
                     URI r = t.getRequestURI();
                     Map<String, String> params = queryToMap(r.getQuery());
                     String itemToAdd = params.get("item");
-                                    	
+                    String valueToAdd = new String("1");
                     String mapName1 = new String("shoppingList");
                     
                     Transaction tx = stateManager.createTransaction();
@@ -96,7 +102,7 @@ public class HttpServer {
                     tx.close();
                     
                     tx = stateManager.createTransaction();
-                    map1.<String,String> putIfAbsentAsync(tx, itemToAdd, "1").get();
+                    map1.<String,String> putIfAbsentAsync(tx, itemToAdd, valueToAdd).get();
                     tx.commitAsync().get();
                     tx.close();                   
                     

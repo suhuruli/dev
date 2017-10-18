@@ -12,7 +12,7 @@ public class WebServiceHost {
 
     public static void main(String[] args) throws Exception{
         try {
-            ServiceRuntime.registerStatelessServiceAsync("WebType", (context)-> new WebService(), Duration.ofSeconds(10));
+            ServiceRuntime.registerStatelessServiceAsync("WebServiceType", (context)-> new WebService(), Duration.ofSeconds(10));
             logger.log(Level.INFO, "Registered stateless service of type WebType");
             Thread.sleep(Long.MAX_VALUE);
         } catch (Exception ex) {
