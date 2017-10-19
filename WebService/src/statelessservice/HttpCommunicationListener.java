@@ -5,19 +5,23 @@
 
 package statelessservice;
 
-import java.io.*;
-import java.net.*;
-import com.sun.net.httpserver.*;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.Headers;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.FileInputStream;
+
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -25,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.io.FileNotFoundException;
 
 import microsoft.servicefabric.services.communication.client.FabricServicePartitionClient;
 import microsoft.servicefabric.services.communication.runtime.CommunicationListener;
@@ -40,6 +43,13 @@ public class HttpCommunicationListener implements CommunicationListener {
     
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
     private static final int STATUS_OK = 200;
+    private static final int STATUS_NOT_FOUND = 404; 
+    private static final String RESPONSE_NOT_FOUND = "404 (Not Found) \n";
+    private static final String MIME = "text/html";  
+    private static final String ENCODING = "UTF-8";
+    
+    private static final String ROOT = "wwwroot/";
+    private static final String FILE_NAME = "index.html";
     
     private com.sun.net.httpserver.HttpServer server;
     private FabricServicePartitionClient<HttpCommunicationClient> client;
@@ -69,28 +79,21 @@ public class HttpCommunicationListener implements CommunicationListener {
             @Override
             public void handle(HttpExchange t) {
                 try {
-	            	String root = "wwwroot/";
 	                URI uri = t.getRequestURI();
-	                System.out.println("looking for: "+ root + uri.getPath());
-	                String path = "index.html";
-	                File file = new File(root + path).getCanonicalFile();
+	                File file = new File(ROOT + FILE_NAME).getCanonicalFile();
 	
 	                if (!file.isFile()) {
 	                  // Object does not exist or is not a file: reject with 404 error.
-	                  String response = "404 (Not Found)\n";
-	                  t.sendResponseHeaders(404, response.length());
+	                  t.sendResponseHeaders(STATUS_NOT_FOUND, RESPONSE_NOT_FOUND.length());
 	                  OutputStream os = t.getResponseBody();
-	                  os.write(response.getBytes());
+	                  os.write(RESPONSE_NOT_FOUND.getBytes());
 	                  os.close();
 	                } else {
 	                  // Object exists and is a file: accept with response code 200.
-	                  String mime = "text/html";
-	                  if(path.substring(path.length()-3).equals(".js")) mime = "application/javascript";
-	                  if(path.substring(path.length()-3).equals("css")) mime = "text/css";            
 	
 	                  Headers h = t.getResponseHeaders();
-	                  h.set("Content-Type", mime);
-	                  t.sendResponseHeaders(200, 0);              
+	                  h.set(HEADER_CONTENT_TYPE, MIME);
+	                  t.sendResponseHeaders(STATUS_OK, 0);              
 	
 	                  OutputStream os = t.getResponseBody();
 	                  FileInputStream fs = new FileInputStream(file);
@@ -105,7 +108,6 @@ public class HttpCommunicationListener implements CommunicationListener {
 	                }  
                 } catch (Exception e) {
                     logger.log(Level.WARNING, null, e);
-                    // Let the handle loop continue
                 }
             }
         });
@@ -117,8 +119,9 @@ public class HttpCommunicationListener implements CommunicationListener {
                     URI r = t.getRequestURI();
                     String method = t.getRequestMethod();
                     
-                    t.sendResponseHeaders(200,0);
+                    t.sendResponseHeaders(STATUS_OK,0);
                     OutputStream os = t.getResponseBody();
+                    
                     client.invokeWithRetryAsync((c) -> {
                         CompletableFuture<Boolean> b = new CompletableFuture<>();
                         String address = c.endPointAddress();
@@ -135,13 +138,15 @@ public class HttpCommunicationListener implements CommunicationListener {
                             conn.setRequestMethod(method);
                             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                             String line;
-                            ArrayList<String> list = new ArrayList<String>();
+                            HashMap<String,String> list = new HashMap<String,String>();
                             
                             while ((line = rd.readLine()) != null) {
-                                list.add(line);
+                            	String[] keyValueArray = line.split(",");
+                            	list.put(keyValueArray[0], keyValueArray[1]);
                             }
+                            
                             String json = new Gson().toJson(list);
-                            os.write(json.getBytes("UTF-8"));
+                            os.write(json.getBytes(ENCODING));
                             rd.close();
                             b.complete(true);
                         } catch (FileNotFoundException ex) {
@@ -171,7 +176,7 @@ public class HttpCommunicationListener implements CommunicationListener {
                     
                     String method = t.getRequestMethod();
                     
-                    t.sendResponseHeaders(200,0);
+                    t.sendResponseHeaders(STATUS_OK,0);
                     OutputStream os = t.getResponseBody();
                     client.invokeWithRetryAsync((c) -> {
                         CompletableFuture<Boolean> b = new CompletableFuture<>();
@@ -195,7 +200,7 @@ public class HttpCommunicationListener implements CommunicationListener {
                                 list.add(line);
                             }
                             String json = new Gson().toJson(list);
-                            os.write(json.getBytes("UTF-8"));
+                            os.write(json.getBytes(ENCODING));
                             rd.close();
                             b.complete(true);
                         } catch (FileNotFoundException ex) {
@@ -225,7 +230,7 @@ public class HttpCommunicationListener implements CommunicationListener {
                     
                     String method = t.getRequestMethod();
                     
-                    t.sendResponseHeaders(200,0);
+                    t.sendResponseHeaders(STATUS_OK,0);
                     OutputStream os = t.getResponseBody();
                     client.invokeWithRetryAsync((c) -> {
                         CompletableFuture<Boolean> b = new CompletableFuture<>();
@@ -249,7 +254,7 @@ public class HttpCommunicationListener implements CommunicationListener {
                                 list.add(line);
                             }
                             String json = new Gson().toJson(list);
-                            os.write(json.getBytes("UTF-8"));
+                            os.write(json.getBytes(ENCODING));
                             rd.close();
                             b.complete(true);
                         } catch (FileNotFoundException ex) {
