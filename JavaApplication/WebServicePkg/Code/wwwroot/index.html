@@ -21,7 +21,7 @@ app.controller("VotingAppController", ['$rootScope', '$scope', '$http', '$timeou
     };
 
     $scope.remove = function (item) {            
-       $http.get("removeItem", {params: { item: item }})
+       $http.get("removeItem", {params: { item: encodeURIComponent(item) }})
        		.then(function successCallback(response) {
      			$scope.refresh();
   			},
@@ -32,7 +32,7 @@ app.controller("VotingAppController", ['$rootScope', '$scope', '$http', '$timeou
 
     $scope.add = function (item) {
         if (!item) {return;}        
-       	$http.get("addItem", {params: { item: item }})
+       	$http.get("addItem", {params: { item: encodeURIComponent(item) }})
    			.then(function successCallback(response) {
  				$scope.refresh();
 			},

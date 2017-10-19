@@ -7,10 +7,10 @@ import java.net.URI;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -24,8 +24,12 @@ import microsoft.servicefabric.data.utilities.AsyncEnumeration;
 import microsoft.servicefabric.data.utilities.KeyValuePair;
 
 public class HttpServer {
-    String baseAddress;
-    int port;
+    private static final Logger logger = Logger.getLogger(HttpServer.class.getName());
+    private static final int STATUS_OK = 200; 
+    private static final String MAP_NAME = "votesMap";
+
+    private String baseAddress;
+    private int port;
     private com.sun.net.httpserver.HttpServer server;
     private ReliableStateManager stateManager;
 
@@ -48,17 +52,13 @@ public class HttpServer {
 
                 try {
                 	
-                    String mapName1 = new String("shoppingList");
+                    String itemAsKey = "";
+
+                    ReliableHashMap<String, String> votesMap = stateManager
+                            .<String, String> getOrAddReliableHashMapAsync(MAP_NAME).get();
                     
                     Transaction tx = stateManager.createTransaction();
-                    ReliableHashMap<String, String> map1 = stateManager
-                            .<String, String> getOrAddReliableHashMapAsync(tx, mapName1).get();
-                    tx.commitAsync().get();
-                    tx.close();
-                    
-                    String itemAsKey = "";
-                    tx = stateManager.createTransaction();
-                    AsyncEnumeration<KeyValuePair<String, String>> kv = map1.keyValuesAsync(tx).get();
+                    AsyncEnumeration<KeyValuePair<String, String>> kv = votesMap.keyValuesAsync(tx).get();
                     while (kv.hasMoreElementsAsync().get()) {
                         KeyValuePair<String, String> k = kv.nextElementAsync().get();
                         
@@ -68,10 +68,9 @@ public class HttpServer {
                     	itemAsKey += "\n";
                     }
                     
-                    tx.commitAsync().get();
                     tx.close();                    
                     
-                    t.sendResponseHeaders(200, 0);
+                    t.sendResponseHeaders(STATUS_OK, 0);
                     OutputStream os = t.getResponseBody();
                     os.write(itemAsKey.getBytes());
                     os.close();
@@ -90,24 +89,38 @@ public class HttpServer {
                     URI r = t.getRequestURI();
                     Map<String, String> params = queryToMap(r.getQuery());
                     String itemToAdd = params.get("item");
-                    String valueToAdd = new String("1");
-                    String mapName1 = new String("shoppingList");
+                    
+                    ReliableHashMap<String, String> votesMap = stateManager
+                            .<String, String> getOrAddReliableHashMapAsync(MAP_NAME).get();                    
                     
                     Transaction tx = stateManager.createTransaction();
-                    ReliableHashMap<String, String> map1 = stateManager
-                            .<String, String> getOrAddReliableHashMapAsync(tx, mapName1).get();
-                    tx.commitAsync().get();
-                    tx.close();
-                    
-                    tx = stateManager.createTransaction();
-                    map1.<String,String> putIfAbsentAsync(tx, itemToAdd, valueToAdd).get();
-                    tx.commitAsync().get();
-                    tx.close();                   
-                    
-                    t.sendResponseHeaders(200, 0);
-                    OutputStream os = t.getResponseBody();
-                    os.write("Success".getBytes());
-                    os.close();
+                    votesMap.computeAsync(tx, itemToAdd, (k, v) -> {
+                        if (v == null) {
+                            return "1";
+                        }
+                        else {
+                        	int numVotes = Integer.parseInt(v);
+                        	numVotes = numVotes + 1;                         	
+                            return Integer.toString(numVotes);
+                        }
+                    }).thenApply((l) -> {
+                        return tx.commitAsync().handle((re, x) -> {
+                            if (x != null) {
+                                logger.log(Level.SEVERE, x.getMessage());
+                            }
+                            try {
+                            	tx.close();
+                                
+                                t.sendResponseHeaders(STATUS_OK, 0);
+                                OutputStream os = t.getResponseBody();
+                                os.write(itemToAdd.getBytes());
+                                os.close();
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, e.getMessage());
+                            }
+                            return null;
+                        });
+                    }).get();    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -123,23 +136,18 @@ public class HttpServer {
                     URI r = t.getRequestURI();
                     Map<String, String> params = queryToMap(r.getQuery());
                     String itemToRemove = params.get("item");
-                    
-                    String mapName1 = new String("shoppingList"); 
+                                        
+                    ReliableHashMap<String, String> votesMap = stateManager
+                            .<String, String> getOrAddReliableHashMapAsync(MAP_NAME).get();
                     
                     Transaction tx = stateManager.createTransaction();
-                    ReliableHashMap<String, String> map1 = stateManager
-                            .<String, String> getOrAddReliableHashMapAsync(tx, mapName1).get();
-                    tx.commitAsync().get();
-                    tx.close();
-                    
-                    tx = stateManager.createTransaction();
-                    map1.<String,String> removeAsync(tx, itemToRemove).get();
+                    votesMap.<String,String> removeAsync(tx, itemToRemove).get();
                     tx.commitAsync().get();
                     tx.close();                    
                     
-                    t.sendResponseHeaders(200, 0);
+                    t.sendResponseHeaders(STATUS_OK, 0);
                     OutputStream os = t.getResponseBody();
-                    os.write("Success".getBytes());
+                    os.write(itemToRemove.getBytes());
                     os.close();
                 } catch (Exception e) {
                     e.printStackTrace();
