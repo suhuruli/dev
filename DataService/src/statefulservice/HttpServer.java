@@ -56,22 +56,20 @@ public class HttpServer {
                     tx.commitAsync().get();
                     tx.close();
                     
-                    tx = stateManager.createTransaction();
-                    AsyncEnumeration<String> keys = map1.<String> keysAsync(tx).get();
-                    tx.commitAsync().get();
-                    tx.close();                                   
-                    
                     String itemAsKey = "";
-                    String keyString; 
-                    while (keys.<Boolean>hasMoreElementsAsync().get().booleanValue()) {
-                    	keyString = keys.nextElementAsync().get();
-                    	itemAsKey += keyString;
+                    tx = stateManager.createTransaction();
+                    AsyncEnumeration<KeyValuePair<String, String>> kv = map1.keyValuesAsync(tx).get();
+                    while (kv.hasMoreElementsAsync().get()) {
+                        KeyValuePair<String, String> k = kv.nextElementAsync().get();
+                        
+                    	itemAsKey += k.getKey();
                     	itemAsKey += ","; 
-                        tx = stateManager.createTransaction();
-                    	itemAsKey += map1.getAsync(tx, keyString).get().getValue();
-                        tx.close();                                   
+                    	itemAsKey += k.getValue();
                     	itemAsKey += "\n";
                     }
+                    
+                    tx.commitAsync().get();
+                    tx.close();                    
                     
                     t.sendResponseHeaders(200, 0);
                     OutputStream os = t.getResponseBody();

@@ -13,7 +13,7 @@ app.controller("VotingAppController", ['$rootScope', '$scope', '$http', '$timeou
     $scope.refresh = function () {
         $http.get('getStatelessList')
             .then(function successCallback(response) {
-     		$scope.votes = response;
+     		$scope.votes = response.data;
   		},
   		function errorCallback(response) {
       		alert(response);
@@ -74,19 +74,19 @@ app.controller("VotingAppController", ['$rootScope', '$scope', '$http', '$timeou
                         Click to vote
                     </div>
                 </div>
-                <div class="row top-buffer" ng-repeat="vote in votes.data">
+                <div class="row top-buffer" ng-repeat="(key, value)  in votes">
                     <div class="col-xs-8">
-                        <button class="btn btn-success text-left btn-block" ng-click="add(vote.key)">
+                        <button class="btn btn-success text-left btn-block" ng-click="add(key)">
                             <span class="pull-left">
-                                {{vote.key}}
+                                {{key}}
                             </span>
                             <span class="badge pull-right">
-                                {{vote.value}} Votes
+                                {{value}} Votes
                             </span>
                         </button>
                     </div>
                     <div class="col-xs-4">
-                        <button class="btn btn-danger pull-right btn-block" ng-click="remove(vote.key)">
+                        <button class="btn btn-danger pull-right btn-block" ng-click="remove(key)">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             Remove
                         </button>
