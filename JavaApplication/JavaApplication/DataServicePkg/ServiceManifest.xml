@@ -15,7 +15,7 @@
   <DataPackage Name="Data" Version="1.0.0" />
   <Resources>
       <Endpoints>
-         <Endpoint Name="ServiceEndpoint" Type="Input" Protocol="http" Port="8081" />
+         <Endpoint Name="ServiceEndpoint" Type="Input" Protocol="http" Port="80" />
          <Endpoint Name="ReplicatorEndpoint" />
       </Endpoints>
    </Resources>
