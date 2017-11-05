@@ -29,6 +29,7 @@ configurations {
 dependencies {
     azuresf ('com.microsoft.servicefabric:sf-actors:1.0.0-preview1')   
     compile fileTree(dir: 'lib', include: '*.jar')
+    compile("org.springframework.boot:spring-boot-starter-web:1.5.8.RELEASE")   
 }
 
 task explodeDeps(type: Copy, dependsOn:configurations.azuresf) { task ->

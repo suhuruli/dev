@@ -272,8 +272,8 @@ public class HttpCommunicationListener implements CommunicationListener {
             }
         });
         
-        server.setExecutor(null);
-        server.start();
+        //server.setExecutor(null);
+        //server.start();
     }
     
     private Map<String, String> queryToMap(String query){
