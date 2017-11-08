@@ -1,0 +1,84 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+sourceSets {
+  main {
+     java.srcDirs = ['src']
+     output.classesDir = 'out/classes'
+      resources {
+       srcDirs = ['src']
+     }
+   }
+}
+
+clean.doFirst {
+    delete "${projectDir}/lib"
+    delete "${projectDir}/out"
+    delete "${projectDir}/../StatefulSpringApplication/StatefulSpringServicePkg/Code/lib"
+    delete "${projectDir}/../StatefulSpringApplication/StatefulSpringServicePkg/Code/StatefulSpringService.jar"
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    azuresf
+}
+
+dependencies {
+    azuresf ('com.microsoft.servicefabric:sf-actors:1.0.0-preview1')   
+    compile fileTree(dir: 'lib', include: '*.jar')
+
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+task explodeDeps(type: Copy, dependsOn:configurations.azuresf) { task ->
+    configurations.azuresf.filter { it.toString().contains("native") }.each{
+        from zipTree(it)
+    }
+    configurations.azuresf.filter { !it.toString().contains("native") }.each {
+        from it
+    }
+    into "lib"
+    include "lib*.so", "*.jar"
+}
+
+jar {
+    manifest {
+    def mpath = configurations.azuresf.collect {'lib/'+it.getName()}.join (' ')
+    attributes(
+        'Main-Class': 'statefulservice.StatefulSpringServiceHost',
+        "Class-Path": mpath)
+    baseName "StatefulSpringService"
+
+    destinationDir = file('../StatefulSpringApplication/StatefulSpringServicePkg/Code/')
+    }
+}
+
+compileJava.dependsOn(explodeDeps)
+
+task copyDeps<< {
+    copy {
+        from("lib/")
+        into("../StatefulSpringApplication/StatefulSpringServicePkg/Code/lib")
+        include('*')
+    }
+}
+
+defaultTasks 'clean', 'jar', 'copyDeps'

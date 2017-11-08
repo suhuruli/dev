@@ -1,0 +1,9 @@
+{
+ "ClusterConnectionParameters": 
+ {
+    "ConnectionIPOrURL": "192.168.50.50",
+    "ConnectionPort": "19080",
+    "ClientKey": "",
+    "ClientCert": ""
+ }
+}
