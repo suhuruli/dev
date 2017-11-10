@@ -45,7 +45,6 @@ dependencies {
     compile fileTree(dir: 'lib', include: '*.jar')
 
     compile("org.springframework.boot:spring-boot-starter-web")
-    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 task explodeDeps(type: Copy, dependsOn:configurations.azuresf) { task ->
@@ -57,11 +56,15 @@ task explodeDeps(type: Copy, dependsOn:configurations.azuresf) { task ->
     }
     into "lib"
     include "lib*.so", "*.jar"
+
+
+    from configurations.compile
+    into "lib/"
 }
 
 jar {
     manifest {
-    def mpath = configurations.azuresf.collect {'lib/'+it.getName()}.join (' ')
+    def mpath = configurations.compile.collect {'lib/'+it.getName()}.join (' ')
     attributes(
         'Main-Class': 'statefulservice.StatefulSpringServiceHost',
         "Class-Path": mpath)
@@ -79,6 +82,10 @@ task copyDeps<< {
         into("../StatefulSpringApplication/StatefulSpringServicePkg/Code/lib")
         include('*')
     }
+}
+
+task listJars << {
+    configurations.compile.each { File file -> println file.name }
 }
 
 defaultTasks 'clean', 'jar', 'copyDeps'

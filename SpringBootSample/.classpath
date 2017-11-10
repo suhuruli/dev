@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="StatefulSpringService/src"/>
+	<classpathentry kind="lib" path="build/libs/vagrant.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/asm-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/asm-commons-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/asm-tree-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/asm-util-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/sf-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/sf-actors-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/sf-services-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/lib/sf-transport-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringApplication/StatefulSpringServicePkg/Code/StatefulSpringService.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/asm-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/asm-commons-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/asm-tree-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/asm-util-5.0.4.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/sf-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/sf-actors-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/sf-services-1.0.0-preview1.jar"/>
+	<classpathentry kind="lib" path="StatefulSpringService/lib/sf-transport-1.0.0-preview1.jar"/>
+	<classpathentry kind="output" path="StatefulSpringService/out/classes"/>
+</classpath>
