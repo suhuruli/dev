@@ -27,9 +27,13 @@ public class TestSpring {
     private ConfigurableApplicationContext ctx; 
 
     public TestSpring(){
-        logger.log(Level.INFO, "TESTING1");
+        logger.log(Level.INFO, "Booting up the Spring Application");
         ctx = SpringApplication.run(TestSpring.class, new String[]{});
-        logger.log(Level.INFO, ctx.toString());
+        logger.log(Level.INFO, "Booted up the Spring Application");
+    }
+
+    public void closeApplication(){
+        this.ctx.close(); 
     }
 }
 

@@ -26,7 +26,7 @@ public class HttpCommunicationListener implements CommunicationListener {
     @Override
     public CompletableFuture<String> openAsync(CancellationToken cancellationToken) {
         int port = 8080;
-        logger.log(Level.INFO, "coming through here!!!");
+        logger.log(Level.INFO, "Coming through openAsync in HTTPCommunicationListener.");
 
         this.listeningAddress = String.format("http://%s:%d/", this.serviceContext.getNodeContext().getIpAddressOrFQDN(), port);
         testSpring = new TestSpring();
@@ -36,10 +36,14 @@ public class HttpCommunicationListener implements CommunicationListener {
 
     @Override
     public CompletableFuture<?> closeAsync(CancellationToken cancellationToken) {
-        return CompletableFuture.completedFuture(null);
+        logger.log(Level.INFO, "Coming through closeAsync in HTTPCommunicationListener.");
+        testSpring.closeApplication();
+        return CompletableFuture.completedFuture(true);
     }
 
     @Override
     public void abort() {
+        logger.log(Level.INFO, "Coming through abort in HTTPCommunicationListener.");        
+        testSpring.closeApplication();
     }
 }

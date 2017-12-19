@@ -1,0 +1,6 @@
+Nov 13, 2017 4:55:27 PM statefulservice.StatefulSpringServiceHost main
+INFO: Registered stateful service of type StatefulSpringServiceType
+Nov 13, 2017 4:55:47 PM statefulservice.HttpCommunicationListener openAsync
+INFO: Coming through openAsync in HTTPCommunicationListener.
+Nov 13, 2017 4:55:47 PM statefulservice.TestSpring <init>
+INFO: Booting up the Spring Application

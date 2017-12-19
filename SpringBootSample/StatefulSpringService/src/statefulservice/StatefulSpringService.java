@@ -22,8 +22,6 @@ public class StatefulSpringService extends StatefulService {
     protected StatefulSpringService (StatefulServiceContext statefulServiceContext) {
         super (statefulServiceContext);
         this.stateManager = this.getReliableStateManager();
-
-        logger.log(Level.INFO, "TESTING");
     }
 
     @Override
