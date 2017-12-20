@@ -1,0 +1,57 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+     java.srcDirs = ['src']
+     output.classesDir = 'out/classes'
+      resources {
+       srcDirs = ['src']
+     }
+   }
+}
+
+clean.doFirst {
+    delete "${projectDir}/lib"
+    delete "${projectDir}/out"
+    delete "${projectDir}/../HelloWorld/HelloWorldPkg/Code/lib"
+    delete "${projectDir}/../HelloWorld/HelloWorldPkg/Code/helloworld.jar"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile ('com.microsoft.servicefabric:sf-actors:1.0.0-preview1')
+}
+
+task explodeDeps(type: Copy, dependsOn:configurations.compile) { task ->
+    configurations.compile.filter {it.toString().contains("native")}.each{
+        from zipTree(it)
+    }
+    into "../HelloWorld/HelloWorldPkg/Code/lib"
+    include "lib*.so"
+}
+
+compileJava.dependsOn(explodeDeps)
+
+jar {
+    from configurations.compile.collect {
+        (it.isDirectory() && !it.getName().contains("native")) ? it : zipTree(it)}
+	
+    manifest {
+        attributes(
+            'Main-Class': 'statelessservice.HelloWorldServiceHost')
+        baseName "helloworld"
+        destinationDir = file('../HelloWorld/HelloWorldPkg/Code/')
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA' 
+}
+
+defaultTasks 'clean', 'jar'
+
+
+
+
