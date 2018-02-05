@@ -1,0 +1,9 @@
+{
+ "ClusterConnectionParameters": 
+ {
+    "ConnectionIPOrURL": "suhurulilinux.westus.cloudapp.azure.com",
+    "ConnectionPort": "19080",
+    "ClientKey": "/Users/suhuruli/Documents/Work/Samples/service-fabric-java-quickstart/AzureCluster/test.pem",
+    "ClientCert": "/Users/suhuruli/Documents/Work/Samples/service-fabric-java-quickstart/AzureCluster/test.pem"
+ }
+}
