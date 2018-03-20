@@ -1,0 +1,9 @@
+{
+ "ClusterConnectionParameters": 
+ {
+    "ConnectionIPOrURL": "suhurulijenkins.westus.cloudapp.azure.com",
+    "ConnectionPort": "19080",
+    "ClientKey": "/Users/suhuruli/Documents/Work/Playground/Tomcat/apache-tomcat-9.0.5/ServiceFabricTomcat/suhurulijenkins-suhurulijenkins-20180314.pem",
+    "ClientCert": "/Users/suhuruli/Documents/Work/Playground/Tomcat/apache-tomcat-9.0.5/ServiceFabricTomcat/suhurulijenkins-suhurulijenkins-20180314.pem"
+ }
+}

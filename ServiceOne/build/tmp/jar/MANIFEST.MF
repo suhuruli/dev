@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Class-Path: lib/sf-actors-1.0.0-preview2.jar lib/tomcat-embed-jasper-8
+ .0.47.jar lib/sf-services-1.0.0-preview2.jar lib/tomcat-embed-core-8.
+ 0.47.jar lib/tomcat-embed-el-8.0.47.jar lib/ecj-3.12.3.jar lib/sf-tra
+ nsport-1.0.0-preview2.jar lib/gson-2.7.jar lib/asm-commons-5.0.4.jar 
+ lib/asm-util-5.0.4.jar lib/asm-tree-5.0.4.jar lib/asm-5.0.4.jar lib/t
+ omcat-annotations-api-8.0.47.jar lib/sf-1.0.0-preview2.jar lib/sf-nat
+ ive-1.0.0-preview2.jar
+Main-Class: statelessservice.ServiceOneServiceHost
+
